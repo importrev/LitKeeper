@@ -428,7 +428,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         log_action(f"Created/verified output directory: {output_directory}")
 
         if cover_image_path is None:
-            cover_image_path = os.path.join(output_directory, f"{story_title}.jpg")
+            cover_image_path = os.path.join(output_directory, f"{sanitize_filename(story_title)}..jpg")
             generate_cover_image(story_title, story_author, cover_image_path)
 
         book = epub.EpubBook()
@@ -527,7 +527,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         log_action("Set table of contents and spine")
 
         def sanitize_filename(filename):
-            return re.sub(r'[^a-zA-Z0-9._-]', '', filename)
+            return re.sub(r'[^a-zA-Z0-9._- ]', '', filename)
 
         epub_path = os.path.join(output_directory, f"{sanitize_filename(story_title)}.epub")
         epub.write_epub(epub_path, book, {})
