@@ -428,7 +428,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         log_action(f"Created/verified output directory: {output_directory}")
 
         if cover_image_path is None:
-            cover_image_path = os.path.join(output_directory, "cover.jpg")
+            cover_image_path = os.path.join(output_directory, f"{story_title}.jpg")
             generate_cover_image(story_title, story_author, cover_image_path)
 
         book = epub.EpubBook()
