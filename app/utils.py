@@ -56,7 +56,7 @@ def log_error(error_message, url=None):
     log_action(f"Error logged: {error_message}")
     
 def sanitize_filename(filename):
-        return re.sub(r'[^a-zA-Z0-9._- ]', '', filename)
+        return re.sub(r'[^a-zA-Z0-9._ -]', '', filename)
                 
 def log_url(url):
     """Log URL to url_log.txt with timestamp."""
