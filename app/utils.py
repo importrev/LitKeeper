@@ -424,11 +424,13 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
     """Create an EPUB file from the story content."""
     try:
         log_action(f"Starting EPUB creation for '{story_title}' by {story_author}")
-        os.makedirs(output_directory, exist_ok=True)
-        log_action(f"Created/verified output directory: {output_directory}")
+        sanitized_author = sanitize_filename(story_author) or "Unknown_Author"
+        author_dir = os.path.join(output_directory, sanitized_author)
+        os.makedirs(author_dir, exist_ok=True)
+        log_action(f"Created/verified output directory: {author_dir}")
 
         if cover_image_path is None:
-            cover_image_path = os.path.join(output_directory, f"{sanitize_filename(story_title)}.jpg")
+            cover_image_path = os.path.join(author_dir, f"{sanitize_filename(story_title)}.jpg")
             generate_cover_image(story_title, story_author, cover_image_path)
 
         book = epub.EpubBook()
@@ -529,7 +531,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         def sanitize_filename(filename):
             return re.sub(r'[^a-zA-Z0-9._- ]', '', filename)
 
-        epub_path = os.path.join(output_directory, f"{sanitize_filename(story_title)}.epub")
+        epub_path = os.path.join(author_dir, f"{sanitize_filename(story_title)}.epub")
         epub.write_epub(epub_path, book, {})
         log_action(f"Successfully wrote EPUB file to: {epub_path}")
         
