@@ -54,7 +54,10 @@ def log_error(error_message, url=None):
         f.write(message)
     
     log_action(f"Error logged: {error_message}")
-
+    
+def sanitize_filename(filename):
+        return re.sub(r'[^a-zA-Z0-9._- ]', '', filename)
+                
 def log_url(url):
     """Log URL to url_log.txt with timestamp."""
     if not ENABLE_URL_LOG:
@@ -423,9 +426,6 @@ def generate_cover_image(title, author, cover_path):
 def create_epub_file(story_title, story_author, story_content, output_directory, cover_image_path=None, story_category=None, story_tags=None):
     """Create an EPUB file from the story content."""
     
-            def sanitize_filename(filename):
-            return re.sub(r'[^a-zA-Z0-9._- ]', '', filename)
-                
     try:
         log_action(f"Starting EPUB creation for '{story_title}' by {story_author}")
         sanitized_author = sanitize_filename(story_author) or "Unknown_Author"
