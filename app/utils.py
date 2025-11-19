@@ -444,6 +444,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         book.set_title(story_title)
         book.set_language('en')
         book.add_author(story_author)
+        book.add_metadata('DC', 'publisher', 'Literotica')
         log_action("Set basic EPUB metadata")
 
         if story_category:
