@@ -15,7 +15,7 @@ def background_process_url(app, url):
         with app.app_context():
             # Download the story and generate the EPUB
             log_action("Starting story download")
-            story_content, story_title, story_author, story_category, story_tags, *_ = download_story(url)
+            story_content, story_title, story_author, story_category, story_tags = download_story(url)
             if not story_content:
                 error_msg = f"Failed to download the story from the given URL: {url}"
                 log_error(error_msg, url)
@@ -31,8 +31,6 @@ def background_process_url(app, url):
                 story_author, 
                 story_content, 
                 os.path.join(os.path.dirname(__file__), "data", "epubs"),
-                chapter_titles=chapter_titles
-                chapter_descriptions=chapter_descriptions,
                 story_category=story_category,
                 story_tags=story_tags
             )
@@ -135,8 +133,6 @@ def process_url(url):
             story_author, 
             story_content, 
             os.path.join(os.path.dirname(__file__), "data", "epubs"),
-            chapter_titles=chapter_titles
-            chapter_descriptions=chapter_descriptions,
             story_category=story_category,
             story_tags=story_tags
         )
