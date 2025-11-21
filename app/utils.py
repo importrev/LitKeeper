@@ -261,7 +261,7 @@ def download_story(url):
         
         description_text = "\n".join(f"{title}: {desc}" for title, desc in zip(chapter_titles, chapter_descriptions))
             
-        return story_content, story_title, story_author, story_category, story_tags
+        return story_content, story_title, story_author, story_category, story_tags, description_text
 
     except Exception as e:
         error_msg = f"Unexpected error in download_story: {str(e)}\n{traceback.format_exc()}"
