@@ -32,7 +32,7 @@ def background_process_url(app, url):
                 story_content, 
                 os.path.join(os.path.dirname(__file__), "data", "epubs"),
                 story_category=story_category,
-                story_tags=story_tags
+                story_tags=story_tags,
                 description_text=download_story(url)
             )
             log_action(f"Successfully created EPUB file: {epub_file_name}")
