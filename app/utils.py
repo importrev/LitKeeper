@@ -430,7 +430,7 @@ def generate_cover_image(title, author, cover_path):
         log_error(error_msg)
         log_action("Failed to generate cover image")
 
-def create_epub_file(story_title, story_author, story_content, output_directory, cover_image_path=None, story_category=None, story_tags=None):
+def create_epub_file(story_title, story_author, story_content, output_directory, cover_image_path=None, story_category=None, story_tags=None, description_text=None):
     """Create an EPUB file from the story content."""
     
     try:
@@ -452,9 +452,10 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         book.set_language('en')
         book.add_author(story_author)
         book.add_metadata('DC', 'publisher', 'Literotica')
-        book.add_metadata('DC', 'description', description_text)
         log_action("Set basic EPUB metadata")
 
+        if description_text:
+            book.add_metadata('DC', 'description', description_text)
         if story_category:
             book.add_metadata('DC', 'subject', story_category)
         if story_tags:
