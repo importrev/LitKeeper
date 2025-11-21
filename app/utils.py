@@ -136,6 +136,7 @@ def download_story(url):
         series_title = None
         chapter_titles = []
         chapter_contents = []
+        chapter_descriptions = []
 
         while chapter_urls:
             current_url = chapter_urls.pop(0)
@@ -181,7 +182,11 @@ def download_story(url):
                             if story_category and story_category not in story_tags:
                                 story_tags = [story_category] + story_tags
                             log_action(f"Extracted category: {story_category} and {len(story_tags)} tags")
-
+    
+                            description_tag = soup.find("div", class_="bn_B")
+                            chapter_description = description_tag.get_text(strip=True) if description_tag else ""
+                            chapter_descriptions.append(chapter_description)
+                    
                     content_div = soup.find("div", class_="aa_ht")
                     if content_div:
                         if current_page == 1:
@@ -254,6 +259,8 @@ def download_story(url):
             story_content += f"\n\nChapter {i}: {title}\n\n{content}"
         log_action(f"Combined {len(chapter_contents)} chapters into final story content")
         
+        description_text = "\n".join(f"{title}: {desc}" for title, desc in zip(chapter_titles, chapter_descriptions)
+            
         return story_content, story_title, story_author, story_category, story_tags
 
     except Exception as e:
@@ -445,6 +452,7 @@ def create_epub_file(story_title, story_author, story_content, output_directory,
         book.set_language('en')
         book.add_author(story_author)
         book.add_metadata('DC', 'publisher', 'Literotica')
+        book.add_metadata('DC', 'description', description_text)
         log_action("Set basic EPUB metadata")
 
         if story_category:
