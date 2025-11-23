@@ -262,7 +262,7 @@ def download_story(url):
             story_content += f"\n\nChapter {i}: {title}\n\n{content}"
         log_action(f"Combined {len(chapter_contents)} chapters into final story content")
         
-        description_text = "\n".join(f"{title}: {desc}" for title, desc in zip(chapter_titles, chapter_descriptions))
+        description_text = "\n".join(f"{title}: {desc}<br>" for title, desc in zip(chapter_titles, chapter_descriptions))
             
         return story_content, story_title, story_author, story_category, story_tags, description_text
 
