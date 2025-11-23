@@ -34,6 +34,7 @@ def background_process_url(app, url):
                 story_category=story_category,
                 story_tags=story_tags,
                 description_text=download_story(url)
+                chapter_word_counts = download_story(url)
             )
             log_action(f"Successfully created EPUB file: {epub_file_name}")
             send_telegram_message(f"Story downloaded successfully: '{story_title}' by {story_author}")
@@ -137,6 +138,7 @@ def process_url(url):
             story_category=story_category,
             story_tags=story_tags,
             description_text=description_text
+            chapter_word_counts=chapter_word_counts
         )
         log_action(f"Successfully created EPUB file: {epub_file_name}")
         send_telegram_message(f"Story downloaded successfully: '{story_title}' by {story_author}")
