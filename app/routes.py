@@ -137,7 +137,7 @@ def process_url(url):
             os.path.join(os.path.dirname(__file__), "data", "epubs"),
             story_category=story_category,
             story_tags=story_tags,
-            description_text=description_text
+            description_text=description_text,
             chapter_word_counts=chapter_word_counts
         )
         log_action(f"Successfully created EPUB file: {epub_file_name}")
