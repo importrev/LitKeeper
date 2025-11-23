@@ -137,6 +137,7 @@ def download_story(url):
         chapter_titles = []
         chapter_contents = []
         chapter_descriptions = []
+        chapter_word_counts = []  
 
         while chapter_urls:
             current_url = chapter_urls.pop(0)
@@ -183,12 +184,15 @@ def download_story(url):
                                 story_tags = [story_category] + story_tags
                             log_action(f"Extracted category: {story_category} and {len(story_tags)} tags")
     
-                        if current_page == 1:          # first page of this chapter
+                        if current_page == 1:    
                             description_tag = soup.find("div", class_="bn_B")
                             chapter_description = description_tag.get_text(strip=True) if description_tag else ""
-                            # Save it together with the chapter title (title will be set later)
-                            # For now we store a placeholder – we’ll replace it after we know the title.
                             chapter_descriptions.append(chapter_description)
+                            
+                        if current_page == 1:  
+                            word_tag = soup.find("span", class_="bn_ap")
+                            chapter_word_count = word_tag.get_text(strip=True) if word_tag else ""
+                            chapter_word_counts.append(chapter_word_count)
                     
                     content_div = soup.find("div", class_="aa_ht")
                     if content_div:
@@ -251,25 +255,25 @@ def download_story(url):
                 except requests.RequestException as e:
                     error_msg = f"Network error while downloading chapter {current_chapter}: {str(e)}"
                     log_error(error_msg, current_url)
-                    return None, None, None, None, None
+                    return None, None, None, None, None, None, None
                 except Exception as e:
                     error_msg = f"Error processing chapter {current_chapter}: {str(e)}\n{traceback.format_exc()}"
                     log_error(error_msg, current_url)
-                    return None, None, None, None, None
+                    return None, None, None, None, None, None, None
 
         story_content = ""
         for i, (title, content) in enumerate(zip(chapter_titles, chapter_contents), 1):
             story_content += f"\n\nChapter {i}: {title}\n\n{content}"
         log_action(f"Combined {len(chapter_contents)} chapters into final story content")
         
-        description_text = "\n".join(f"{title}: {desc}<br>" for title, desc in zip(chapter_titles, chapter_descriptions))
+        description_text = "\n".join(f"{title} ({word_cnt}): {desc}<br>" for title, desc, word_cnt in zip(chapter_titles, chapter_descriptions, chapter_word_counts))
             
         return story_content, story_title, story_author, story_category, story_tags, description_text
 
     except Exception as e:
         error_msg = f"Unexpected error in download_story: {str(e)}\n{traceback.format_exc()}"
         log_error(error_msg, url)
-        return None, None, None, None, None, None
+        return None, None, None, None, None, None, None
 
 def format_story_content(content):
     """Format story content into properly formatted paragraphs for EPUB."""
