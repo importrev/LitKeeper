@@ -183,8 +183,11 @@ def download_story(url):
                                 story_tags = [story_category] + story_tags
                             log_action(f"Extracted category: {story_category} and {len(story_tags)} tags")
     
+                        if current_page == 1:          # first page of this chapter
                             description_tag = soup.find("div", class_="bn_B")
                             chapter_description = description_tag.get_text(strip=True) if description_tag else ""
+                            # Save it together with the chapter title (title will be set later)
+                            # For now we store a placeholder – we’ll replace it after we know the title.
                             chapter_descriptions.append(chapter_description)
                     
                     content_div = soup.find("div", class_="aa_ht")
@@ -266,7 +269,7 @@ def download_story(url):
     except Exception as e:
         error_msg = f"Unexpected error in download_story: {str(e)}\n{traceback.format_exc()}"
         log_error(error_msg, url)
-        return None, None, None, None, None
+        return None, None, None, None, None, None
 
 def format_story_content(content):
     """Format story content into properly formatted paragraphs for EPUB."""
