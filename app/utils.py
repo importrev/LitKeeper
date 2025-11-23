@@ -437,7 +437,7 @@ def generate_cover_image(title, author, cover_path):
         log_error(error_msg)
         log_action("Failed to generate cover image")
 
-def create_epub_file(story_title, story_author, story_content, output_directory, cover_image_path=None, story_category=None, story_tags=None, description_text=None):
+def create_epub_file(story_title, story_author, story_content, output_directory, cover_image_path=None, story_category=None, story_tags=None, description_text=None, chapter_word_counts=None):
     """Create an EPUB file from the story content."""
     
     try:
