@@ -15,7 +15,7 @@ def background_process_url(app, url):
         with app.app_context():
             # Download the story and generate the EPUB
             log_action("Starting story download")
-            story_content, story_title, story_author, story_category, story_tags, description_text = download_story(url)
+            story_content, story_title, story_author, story_category, story_tags, description_text, chapter_word_counts = download_story(url)
             if not story_content:
                 error_msg = f"Failed to download the story from the given URL: {url}"
                 log_error(error_msg, url)
