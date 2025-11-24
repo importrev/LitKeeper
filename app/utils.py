@@ -334,7 +334,7 @@ def format_metadata_content(category=None, tags=None):
     content += "</div>"
     return content
 
-def generate_cover_image(title, author, cover_path):
+def generate_cover_image(title, author, cover_path, chapter_word_counts=None):
     """
     Generate a cover image with a gradient background, a simulated spine effect, 
     and styled text that mimics the provided design.
