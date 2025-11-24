@@ -400,7 +400,7 @@ def generate_cover_image(title, author, cover_path, chapter_word_counts=None):
                 raise Exception(f"Bundled font not found at {font_path}")
                 
             title_font = ImageFont.truetype(font_path, 128)  # Large title font
-            count_font = ImageFont.truetype(font_path, 96) if word_count_str else None
+            count_font = ImageFont.truetype(font_path, 68) if word_count_str else None
             author_font = ImageFont.truetype(font_path, 72)  # Large author font
         except Exception as e:
             title_font = ImageFont.load_default()
