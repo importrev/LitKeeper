@@ -192,7 +192,7 @@ def download_story(url):
                         if current_page == 1:  
                             word_tag = soup.find("span", class_="bn_ap")
                             chapter_word_count = word_tag.get_text(strip=True) if word_tag else ""
-                            chapter_word_counts.append(chapter_word_count)
+                            chapter_word_counts.append(int(float(chapter_word_count.rstrip('k')) * 1000) if chapter_word_count.endswith('k')else int(chapter_word_count))
                     
                     content_div = soup.find("div", class_="aa_ht")
                     if content_div:
@@ -265,8 +265,10 @@ def download_story(url):
         for i, (title, content) in enumerate(zip(chapter_titles, chapter_contents), 1):
             story_content += f"\n\nChapter {i}: {title}\n\n{content}"
         log_action(f"Combined {len(chapter_contents)} chapters into final story content")
+
+        def format_word_count(n): return f"{n/1000:g}k words" if n >= 1000 else f"{n} words"
         
-        description_text = "\n".join(f"{title} ({word_cnt}): {desc}<br>" for title, desc, word_cnt in zip(chapter_titles, chapter_descriptions, chapter_word_counts))
+        description_text = "\n".join(f"{title} ({format_word_count(word_cnt)}): {desc}<br>" for title, desc, word_cnt in zip(chapter_titles, chapter_descriptions, chapter_word_counts))
             
         return story_content, story_title, story_author, story_category, story_tags, description_text, chapter_word_counts
 
