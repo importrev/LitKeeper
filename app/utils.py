@@ -345,6 +345,16 @@ def generate_cover_image(title, author, cover_path):
         cover_path (str): The file path to save the generated cover.
     """
     try:
+
+        word_count_str = None
+        if chapter_word_counts:
+            total = sum(chapter_word_counts)
+            if total >= 1000:
+                total_k = round(total / 1000, 1)
+                word_count_str = f"{total_k:g}k words"
+            else:
+                word_count_str = f"{total} words"
+        
         log_action(f"Generating cover image for '{title}' by {author}")
         width, height = 1200, 1600  # Double the size for higher resolution
         
@@ -379,9 +389,11 @@ def generate_cover_image(title, author, cover_path):
                 raise Exception(f"Bundled font not found at {font_path}")
                 
             title_font = ImageFont.truetype(font_path, 128)  # Large title font
+            count_font = ImageFont.truetype(font_path, 96) if word_count_str else None
             author_font = ImageFont.truetype(font_path, 72)  # Large author font
         except Exception as e:
             title_font = ImageFont.load_default()
+            count_font = ImageFont.load_default()
             author_font = ImageFont.load_default()
             log_action("Using default font as Open Sans not found")
 
@@ -422,6 +434,12 @@ def generate_cover_image(title, author, cover_path):
             draw.text((x, current_y), line, fill=text_color, font=title_font)
             current_y += line_height + 40
 
+        if word_count_str:
+            line_w = draw.textbbox((0, 0), word_count_str, font=count_font)[2]
+            x = (width - line_w) // 2
+            y += 20  # small gap after title
+            draw.text((x, y), word_count_str, fill=text_color, font=count_font)
+        
         author_bbox = draw.textbbox((0, 0), author, font=author_font)  # Get bounding box of the author text
         author_width = author_bbox[2] - author_bbox[0]
         author_height = author_bbox[3] - author_bbox[1]
