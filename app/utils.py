@@ -448,7 +448,7 @@ def generate_cover_image(title, author, cover_path, chapter_word_counts=None):
         if word_count_str:
             line_w = draw.textbbox((0, 0), word_count_str, font=count_font)[2]
             x = (width - line_w) // 2
-            y += 20  # small gap after title
+            current_y += 20  # small gap after title
             draw.text((x, y), word_count_str, fill=text_color, font=count_font)
         
         author_bbox = draw.textbbox((0, 0), author, font=author_font)  # Get bounding box of the author text
