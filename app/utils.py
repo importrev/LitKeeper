@@ -189,14 +189,19 @@ def download_story(url):
                             chapter_description = description_tag.get_text(strip=True) if description_tag else ""
                             chapter_descriptions.append(chapter_description)
                             
-                        if current_page == 1:  
+                        if current_page == 1:
                             word_tag = soup.find("span", class_="bn_ap")
                             chapter_word_count = word_tag.get_text(strip=True) if word_tag else ""
-                             clean = chapter_word_count.strip()
-                                clean = re.sub(r'\s*words$', '', clean)
-                                if clean.endswith('k'):num = int(float(clean[:-1]) * 1000)
-                                else:num = int(clean)
-                                chapter_word_counts.append(num)
+                        
+                            clean = chapter_word_count.strip()
+                            clean = re.sub(r'\s*words$', '', clean)
+                        
+                            if clean.endswith('k'):
+                                num = int(float(clean[:-1]) * 1000)
+                            else:
+                                num = int(clean)
+                        
+                            chapter_word_counts.append(num)
                     
                     content_div = soup.find("div", class_="aa_ht")
                     if content_div:
