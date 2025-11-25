@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
     libfribidi0 \
     libpng16-16 \
     libjpeg62-turbo \
+    shadow \   
     gosu \
     && rm -rf /var/lib/apt/lists/*
 
@@ -41,14 +42,10 @@ WORKDIR /litkeeper
 COPY app app/
 COPY run.py .
 
-# Create data directories with correct permissions
-RUN mkdir -p app/data/epubs app/data/logs && \
-    chmod -R 775 app/data
-RUN groupadd --gid ${PGID} litkeeper && \
-    useradd --uid ${PUID} --gid ${PGID} --shell /usr/sbin/nologin -M litkeeper && \
-    chown -R litkeeper:litkeeper app/data
-
 # Set environment variables
+ARG PUID=1000
+ARG PGID=1000
+ARG UMASK=022
 ENV PUID=1000
 ENV PGID=1000
 ENV UMASK=022
@@ -56,6 +53,13 @@ ENV FLASK_APP=app
 ENV FLASK_ENV=production
 ENV PYTHONPATH=/litkeeper
 ENV PYTHONUNBUFFERED=1
+
+# Create data directories with correct permissions
+RUN mkdir -p app/data/epubs app/data/logs && \
+    chmod -R 775 app/data
+RUN groupadd --gid ${PGID} litkeeper && \
+    useradd --uid ${PUID} --gid ${PGID} --shell /usr/sbin/nologin -M litkeeper && \
+    chown -R litkeeper:litkeeper app/data
 
 # Expose port
 EXPOSE 5000
