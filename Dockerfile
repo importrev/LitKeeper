@@ -19,6 +19,11 @@ RUN pip install --no-cache-dir wheel && \
 # Final stage
 FROM python:3.9-slim
 
+
+ARG PUID=1000
+ARG PGID=1000
+ARG UMASK=022
+
 # Copy virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -42,17 +47,6 @@ WORKDIR /litkeeper
 COPY app app/
 COPY run.py .
 
-# Set environment variables
-ARG PUID=1000
-ARG PGID=1000
-ARG UMASK=022
-ENV PUID=1000
-ENV PGID=1000
-ENV UMASK=022
-ENV FLASK_APP=app
-ENV FLASK_ENV=production
-ENV PYTHONPATH=/litkeeper
-ENV PYTHONUNBUFFERED=1
 
 # Create data directories with correct permissions
 RUN mkdir -p app/data/epubs app/data/logs && \
@@ -60,6 +54,15 @@ RUN mkdir -p app/data/epubs app/data/logs && \
 RUN groupadd --gid ${PGID} litkeeper && \
     useradd --uid ${PUID} --gid ${PGID} --shell /usr/sbin/nologin -M litkeeper && \
     chown -R litkeeper:litkeeper app/data
+    
+# Set environment variables
+ENV PUID=1000
+ENV PGID=1000
+ENV UMASK=022
+ENV FLASK_APP=app
+ENV FLASK_ENV=production
+ENV PYTHONPATH=/litkeeper
+ENV PYTHONUNBUFFERED=1
 
 # Expose port
 EXPOSE 5000
