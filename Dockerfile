@@ -55,11 +55,3 @@ EXPOSE 5000
 
 # Run the application with Flask development server
 CMD ["flask", "run", "--host=0.0.0.0"]
-
-# Set up configurable environment variables
-ARG PUID=1000
-ARG PGID=1000
-ARG UMASK=022
-ENV PUID=$PUID \
-    PGID=$PGID \
-    UMASK=$UMASK
