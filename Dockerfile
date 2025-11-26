@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.9-slim-bullseye as builder
+FROM python:3.9-slim-buster as builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir wheel && \
     pip install --no-cache-dir -r requirements.txt
 
 # Final stage
-FROM python:3.9-slim-bullseye
+FROM python:3.9-slim-buster
 
 
 ARG PUID=1000
