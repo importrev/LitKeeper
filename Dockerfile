@@ -1,61 +1,65 @@
-# -------------------------------------------------------------
-# 1️⃣  Build stage – copy source, install Python deps only
-# -------------------------------------------------------------
-FROM python:3.9-slim-buster AS builder
+# Build stage
+FROM python:3.9-slim as builder
 
-# Create & activate a virtual environment
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create and activate virtual environment
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy the dependency list and install them
+# Copy and install requirements
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
-# -------------------------------------------------------------
-# 2️⃣  Final stage – runtime image
-# -------------------------------------------------------------
-FROM python:3.9-slim-buster
+# Final stage
+FROM python:3.9-slim
 
-ARG PUID=1000
-ARG PGID=1000
-ARG UMASK=022
-
-# Copy the virtual env from the builder
+# Copy virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Grab the official gosu binary (works on all architectures)
-RUN wget -O /usr/local/bin/gosu \
-        https://github.com/tianon/gosu/releases/download/1.17-3/gosu-$(dpkg --print-architecture) && \
-    chmod +x /usr/local/bin/gosu
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    --no-install-recommends \
+    libfreetype6 \
+    libharfbuzz0b \
+    libfribidi0 \
+    libpng16-16 \
+    libjpeg62-turbo \
+    && rm -rf /var/lib/apt/lists/*
 
-# -------------------------------------------------------------
-# 3️⃣  Application
-# -------------------------------------------------------------
+# Set up application directory
 WORKDIR /litkeeper
 
+# Copy only necessary files
 COPY app app/
 COPY run.py .
 
-# Create the data directories – permissions will be fixed by the entrypoint
+# Create data directories with correct permissions
 RUN mkdir -p app/data/epubs app/data/logs && \
-    chmod -R 775 app/data
+    chmod -R 777 app/data
 
-# Export runtime variables (overridable with -e)
-ENV PUID=${PUID} \
-    PGID=${PGID} \
-    UMASK=${UMASK} \
-    FLASK_APP=app \
-    FLASK_ENV=production \
-    PYTHONPATH=/litkeeper \
-    PYTHONUNBUFFERED=1
+# Set environment variables
+ENV FLASK_APP=app
+ENV FLASK_ENV=production
+ENV PYTHONPATH=/litkeeper
+ENV PYTHONUNBUFFERED=1
 
-# -------------------------------------------------------------
-# 4️⃣  Entrypoint – creates user/group, sets umask, drops to user
-# -------------------------------------------------------------
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
+# Expose port
 EXPOSE 5000
+
+# Run the application with Flask development server
 CMD ["flask", "run", "--host=0.0.0.0"]
+
+# Set up configurable environment variables
+ARG PUID=1000
+ARG PGID=1000
+ARG UMASK=022
+ENV PUID=$PUID \
+    PGID=$PGID \
+    UMASK=$UMASK
