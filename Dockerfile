@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libharfbuzz0b \
         libfribidi0 \
         libpng16-16 \
-        libjpeg62-turbo \
+        libjpeg-turbo8 \
         shadow && \
     rm -rf /var/lib/apt/lists/*
 
