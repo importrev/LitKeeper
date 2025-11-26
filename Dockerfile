@@ -30,14 +30,14 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install only runtime dependencies
 RUN apt-get update && apt-get install -y \
-    --no-install-recommends \
-    libfreetype6 \
-    libharfbuzz0b \
-    libfribidi0 \
-    libpng16-16 \
-    libjpeg62-turbo \
-    shadow \   
-    gosu \
+        --no-install-recommends \
+        libfreetype6 \
+        libharfbuzz0b \
+        libfribidi0 \
+        libpng16-16 \
+        libjpeg62-turbo \
+        shadow \
+        gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up application directory
@@ -54,22 +54,19 @@ RUN mkdir -p app/data/epubs app/data/logs && \
 RUN groupadd --gid ${PGID} litkeeper && \
     useradd --uid ${PUID} --gid ${PGID} --shell /usr/sbin/nologin -M litkeeper && \
     chown -R litkeeper:litkeeper app/data
-    
-# Set environment variables
-ENV PUID=1000
-ENV PGID=1000
-ENV UMASK=022
-ENV FLASK_APP=app
-ENV FLASK_ENV=production
-ENV PYTHONPATH=/litkeeper
-ENV PYTHONUNBUFFERED=1
 
-# Expose port
-EXPOSE 5000
-
+# Export the same values to the runtime env (so you can override at build time)
+ENV PUID=${PUID} \
+    PGID=${PGID} \
+    UMASK=${UMASK} \
+    FLASK_APP=app \
+    FLASK_ENV=production \
+    PYTHONPATH=/litkeeper \
+    PYTHONUNBUFFERED=1
 # Run the application with Flask development server
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
+EXPOSE 5000
 CMD ["flask", "run", "--host=0.0.0.0"]
