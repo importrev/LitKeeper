@@ -193,8 +193,8 @@ def download_story(url):
                             word_tag = soup.find("span", class_="_time__text_5hbon_683")
                             chapter_word_count = word_tag.get_text(strip=True) if word_tag else ""
                         
-                            clean = chapter_word_count.strip()
-                            clean = re.sub(r'\s*words$', '', clean)
+                            clean = re.sub(r'[^\d\.kK]', '', chapter_word_count)
+                        
                             if clean.lower().endswith('k'):
                                 num = int(float(clean[:-1]) * 1000)
                             else:
