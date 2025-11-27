@@ -190,7 +190,7 @@ def download_story(url):
                             chapter_descriptions.append(chapter_description)
                             
                         if current_page == 1:
-                            word_tag = soup.find("span", class_="_time__text_5hbon_683")
+                            word_tag = soup.find("span", class_=lambda c: c in ("_time__text_5hbon_683", "bn_ap"))
                             chapter_word_count = word_tag.get_text(strip=True) if word_tag else ""
                         
                             clean = re.sub(r'[^\d\.kK]', '', chapter_word_count)
