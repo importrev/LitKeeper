@@ -195,6 +195,7 @@ def download_story(url):
                         
                             clean = chapter_word_count.strip()
                             clean = re.sub(r'\s*words$', '', clean)
+                            clean = re.sub(r'[\u200E\u200F]', '', word_count_text).strip()
                         
                             if clean.endswith('k'):
                                 num = int(float(clean[:-1]) * 1000)
